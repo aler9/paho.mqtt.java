@@ -430,7 +430,7 @@ public class MqttAsyncClient implements IMqttAsyncClient { // DestinationProvide
 			else if (factory instanceof SSLSocketFactory) {
 				throw ExceptionHelper.createMqttException(MqttException.REASON_CODE_SOCKET_FACTORY_MISMATCH);
 			}
-			netModule = new WebSocketNetworkModule(factory, address, host, port, clientId);
+			netModule = new WebSocketNetworkModule(factory, address, host, port, clientId, options.getCustomWebSocketHeaders());
 			((WebSocketNetworkModule)netModule).setConnectTimeout(options.getConnectionTimeout());
 			break;
 		case MqttConnectOptions.URI_TYPE_WSS:
@@ -451,7 +451,7 @@ public class MqttAsyncClient implements IMqttAsyncClient { // DestinationProvide
 			}
 
 			// Create the network module...	
-			netModule = new WebSocketSecureNetworkModule((SSLSocketFactory) factory, address, host, port, clientId);
+			netModule = new WebSocketSecureNetworkModule((SSLSocketFactory) factory, address, host, port, clientId, options.getCustomWebSocketHeaders());
 			((WebSocketSecureNetworkModule)netModule).setSSLhandshakeTimeout(options.getConnectionTimeout());
 			// Ciphers suites need to be set, if they are available
 			if (wSSFactoryFactory != null) {

@@ -28,6 +28,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.Iterator;
 /**
  * Helper class to execute a WebSocket Handshake.
  */
@@ -51,14 +54,16 @@ public class WebSocketHandshake {
 	String uri;
 	String host;
 	int port;
+    Properties customWebSocketHeaders;
 	
 	
-	public WebSocketHandshake(InputStream input, OutputStream output, String uri, String host, int port){
+	public WebSocketHandshake(InputStream input, OutputStream output, String uri, String host, int port, Properties customWebSocketHeaders){
 		this.input = input;
 		this.output = output;
 		this.uri = uri;
 		this.host = host;
 		this.port = port;
+        this.customWebSocketHeaders = customWebSocketHeaders;
 	}
 
 	
@@ -99,6 +104,17 @@ public class WebSocketHandshake {
 			pw.print("Sec-WebSocket-Key: " + key + LINE_SEPARATOR);
 			pw.print("Sec-WebSocket-Protocol: mqttv3.1" + LINE_SEPARATOR);
 			pw.print("Sec-WebSocket-Version: 13" + LINE_SEPARATOR);
+
+			if (customWebSocketHeaders != null) {
+				Set keys = customWebSocketHeaders.keySet();
+				Iterator i = keys.iterator();
+				while (i.hasNext()) {
+					String k = (String) i.next();
+					String value = customWebSocketHeaders.getProperty(k);
+					pw.print(k + ": " + value + LINE_SEPARATOR);
+				}
+			}
+
 			pw.print(LINE_SEPARATOR);
 			pw.flush();
 		} catch (URISyntaxException e) {
